@@ -4,6 +4,10 @@ let elGoodbyeScreen = document.getElementById("goodbyescreen");
 let elWelcomeBtn = document.getElementById("welcome_btn");
 let elBackToStartBtn = document.getElementById("backToStart_btn");
 let elNumberOfQuestions = document.getElementById("numberOfQuestions");
+let elUserNameView = document.getElementById("userNameView");
+let valUserName = "";
+let users = [];
+let user;
 
 function Question(title, answers) {
   this.title = title;
@@ -16,13 +20,13 @@ function Question(title, answers) {
     let questionTitle = document.createElement("h3");
     questionTitle.textContent = this.title;
     let questionAnswers = document.createElement("ul");
-    questionAnswers.classList.add("question_answers");
+    questionAnswers.classList.add("question__answer");
 
     this.answers.forEach((answer, index) => {
       let elAnswer = document.createElement("li");
       elAnswer.classList.add("answer");
       elAnswer.textContent = answer;
-      elAnswer.id = index + 1;
+      elAnswer.id = index;
       elAnswer.addEventListener("click", this.enterAnswer);
       questionAnswers.append(elAnswer);
     });
@@ -33,15 +37,14 @@ function Question(title, answers) {
   };
   this.enterAnswer = (event) => {
     let selectedAnswer = event.target.id;
-    console.log(quiz.indexCurrentQuestion);
-
+    user.answers.push(selectedAnswer);
     elQuestionScreen.textContent = "";
     if (
       ((quiz.indexCurrentQuestion == 1 ||
         quiz.indexCurrentQuestion == 4 ||
         quiz.indexCurrentQuestion == 7 ||
         quiz.indexCurrentQuestion == 10) &&
-        selectedAnswer == 2) ||
+        selectedAnswer == 1) ||
       quiz.indexCurrentQuestion == 2 ||
       quiz.indexCurrentQuestion == 5 ||
       quiz.indexCurrentQuestion == 8 ||
@@ -71,6 +74,11 @@ function Quiz() {
       elGoodbyeScreen.style.display = "block";
     }
   };
+}
+
+function User(username) {
+  this.username = username;
+  this.answers = [];
 }
 
 let question1 = new Question(
@@ -186,7 +194,14 @@ elNumberOfQuestions.textContent = quiz.questions.length;
 const seeFirstQuestion = () => {
   elWelcomeScreen.style.display = "none";
   elQuestionScreen.style.display = "block";
-  console.log(elNumberOfQuestions);
+  elUserNameView.style.display = "block";
+
+  valUserName = document.getElementById("username").value;
+  if (!valUserName.length) valUserName = "Anónimo";
+  user = new User(valUserName);
+  users.push(user);
+  elUserNameView.textContent =
+    "<span><strong>Usuario:</strong> " + valUserName + "</span>";
   quiz.showCurrentQuestion();
 };
 
@@ -196,6 +211,9 @@ const returnToStart = () => {
   elWelcomeScreen.style.display = "block";
   elQuestionScreen.style.display = "none";
   elGoodbyeScreen.style.display = "none";
+  elUserNameView.style.display = "none";
+  quiz.indexCurrentQuestion = 0;
+  console.log(users);
 };
 
 elBackToStartBtn.addEventListener("click", returnToStart);

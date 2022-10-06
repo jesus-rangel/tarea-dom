@@ -31,7 +31,7 @@
 }
 
 .question__answer {
-  list-style: none;
+  list-style-type: none;
   padding-left: 0;
 }
 
@@ -43,4 +43,13 @@
   padding: 0.5rem 1rem;
   margin: 10px auto;
   cursor: pointer;
+}
+.quiz__usernameview{
+  text-align: right;  
+}
+.quiz__usernameview span{
+  border-radius: 3px;
+  border: 1px solid #818105;
+  padding: 3px;
+  background-color: #f8f878;
 }
