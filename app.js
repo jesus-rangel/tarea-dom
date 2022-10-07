@@ -1,8 +1,13 @@
+// DOM Elements and Global Variables
+
 let elQuestionScreen = document.getElementById("questionscreen");
 let elWelcomeScreen = document.getElementById("welcomescreen");
 let elGoodbyeScreen = document.getElementById("goodbyescreen");
+let elUserResponseScreen = document.getElementById("user_responsescreen");
 let elWelcomeBtn = document.getElementById("welcome_btn");
 let elBackToStartBtn = document.getElementById("backToStart_btn");
+let elResponseBtn = document.getElementById("responses_btn");
+let elVolverBtn = document.getElementById("volver_btn");
 let elNumberOfQuestions = document.getElementById("numberOfQuestions");
 let elUserNameView = document.getElementById("userNameView");
 let valUserName = "";
@@ -37,7 +42,7 @@ function Question(title, answers) {
   };
   this.enterAnswer = (event) => {
     let selectedAnswer = event.target.id;
-    user.answers.push(selectedAnswer);
+    user.answers.push([quiz.indexCurrentQuestion, selectedAnswer]);
     elQuestionScreen.textContent = "";
     if (
       ((quiz.indexCurrentQuestion == 1 ||
@@ -191,16 +196,18 @@ quiz.addQuestions([
 
 elNumberOfQuestions.textContent = quiz.questions.length;
 
+// Buttons and their functions
+
 const seeFirstQuestion = () => {
   elWelcomeScreen.style.display = "none";
   elQuestionScreen.style.display = "block";
   elUserNameView.style.display = "block";
 
-  valUserName = document.getElementById("username").value;
+  valUserName = document.getElementById("enter_username").value;
   if (!valUserName.length) valUserName = "Anónimo";
   user = new User(valUserName);
   users.push(user);
-  elUserNameView.textContent =
+  elUserNameView.innerHTML =
     "<span><strong>Usuario:</strong> " + valUserName + "</span>";
   quiz.showCurrentQuestion();
 };
@@ -217,3 +224,60 @@ const returnToStart = () => {
 };
 
 elBackToStartBtn.addEventListener("click", returnToStart);
+
+const volverAlInicio = () => {
+  elUserResponseScreen.style.display = "none";
+  elWelcomeScreen.style.display = "block";
+};
+
+const showResponses = () => {
+  elUserResponseScreen.style.display = "block";
+  elWelcomeScreen.style.display = "none";
+
+  let responseTitle = document.createElement("h1");
+  responseTitle.textContent = "Respuestas de otros usuarios";
+  elUserResponseScreen.append(responseTitle);
+
+  let volverBtn = document.createElement("button");
+  volverBtn.id = "volver_btn";
+  volverBtn.textContent = "Volver";
+
+  if (users.length === 0) {
+    let p = document.createElement("p");
+    p.textContent = "No hay respuestas de otros usuarios en memoria";
+    elUserResponseScreen.append(p);
+
+    elUserResponseScreen.append(volverBtn);
+    volverBtn.addEventListener("click", volverAlInicio);
+    return;
+  }
+
+  users.forEach((user) => {
+    let table = document.createElement("table");
+    let tableHeader = document.createElement("th");
+    tableHeader.colSpan = 2;
+    tableHeader.textContent = `Usuario: ${user.username}`;
+
+    let tableBody = document.createElement("tbody");
+    user.answers.forEach((answer) => {
+      let tr = document.createElement("tr");
+      let td1 = document.createElement("td");
+      let td2 = document.createElement("td");
+
+      td1.textContent = quiz.questions[answer[0]].title;
+      td2.textContent = quiz.questions[answer[0]].answers[answer[1]];
+
+      tr.append(td1);
+      tr.append(td2);
+      tableBody.append(tr);
+      elUserResponseScreen.append(table);
+      table.append(tableHeader);
+      table.append(tableBody);
+    });
+  });
+
+  elUserResponseScreen.append(volverBtn);
+  volverBtn.addEventListener("click", volverAlInicio);
+};
+
+elResponseBtn.addEventListener("click", showResponses);
