@@ -233,6 +233,7 @@ const volverAlInicio = () => {
 const showResponses = () => {
   elUserResponseScreen.style.display = "block";
   elWelcomeScreen.style.display = "none";
+  elUserResponseScreen.textContent = "";
 
   let responseTitle = document.createElement("h1");
   responseTitle.textContent = "Respuestas de otros usuarios";
@@ -252,7 +253,9 @@ const showResponses = () => {
     return;
   }
 
+  console.log(users);
   users.forEach((user) => {
+    console.log(user);
     let table = document.createElement("table");
     let tableHeader = document.createElement("th");
     tableHeader.colSpan = 2;
